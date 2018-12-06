@@ -34,6 +34,8 @@
             this.btnNewTab = new System.Windows.Forms.Button();
             this.pnlResize = new System.Windows.Forms.Panel();
             this.btnHelp = new System.Windows.Forms.Button();
+            this.btnFullScreen = new System.Windows.Forms.Button();
+            this.pnlBG = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // tabSide
@@ -57,12 +59,15 @@
             this.tabSide.TabCloseButtonImageHot = null;
             this.tabSide.TabIndex = 3;
             this.tabSide.TabMaximumWidth = 250;
+            this.tabSide.TabTop = 4;
+            this.tabSide.TopSeparator = false;
             // 
             // btnNewTab
             // 
-            this.btnNewTab.BackColor = System.Drawing.SystemColors.Highlight;
+            this.btnNewTab.BackColor = System.Drawing.Color.DimGray;
             this.btnNewTab.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNewTab.Location = new System.Drawing.Point(2724, 0);
+            this.btnNewTab.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNewTab.Location = new System.Drawing.Point(2660, 0);
             this.btnNewTab.Margin = new System.Windows.Forms.Padding(0);
             this.btnNewTab.Name = "btnNewTab";
             this.btnNewTab.Size = new System.Drawing.Size(64, 62);
@@ -85,9 +90,9 @@
             // 
             // btnHelp
             // 
-            this.btnHelp.BackColor = System.Drawing.SystemColors.Highlight;
+            this.btnHelp.BackColor = System.Drawing.Color.DimGray;
             this.btnHelp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.1F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnHelp.Location = new System.Drawing.Point(2788, 0);
             this.btnHelp.Margin = new System.Windows.Forms.Padding(0);
             this.btnHelp.Name = "btnHelp";
@@ -97,6 +102,28 @@
             this.btnHelp.UseVisualStyleBackColor = false;
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
+            // btnFullScreen
+            // 
+            this.btnFullScreen.BackColor = System.Drawing.Color.DimGray;
+            this.btnFullScreen.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnFullScreen.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFullScreen.Location = new System.Drawing.Point(2724, 0);
+            this.btnFullScreen.Margin = new System.Windows.Forms.Padding(0);
+            this.btnFullScreen.Name = "btnFullScreen";
+            this.btnFullScreen.Size = new System.Drawing.Size(64, 62);
+            this.btnFullScreen.TabIndex = 8;
+            this.btnFullScreen.Text = "⛶";
+            this.btnFullScreen.UseVisualStyleBackColor = false;
+            this.btnFullScreen.Click += new System.EventHandler(this.btnFullScreen_Click);
+            // 
+            // pnlBG
+            // 
+            this.pnlBG.Location = new System.Drawing.Point(2660, 0);
+            this.pnlBG.Name = "pnlBG";
+            this.pnlBG.Size = new System.Drawing.Size(182, 64);
+            this.pnlBG.TabIndex = 9;
+            this.pnlBG.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlBG_Paint);
+            // 
             // frmMain
             // 
             this.AllowDrop = true;
@@ -105,10 +132,12 @@
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(2844, 1653);
+            this.Controls.Add(this.btnFullScreen);
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.pnlResize);
             this.Controls.Add(this.btnNewTab);
             this.Controls.Add(this.tabSide);
+            this.Controls.Add(this.pnlBG);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(6);
@@ -130,6 +159,8 @@
         private System.Windows.Forms.Button btnNewTab;
         private System.Windows.Forms.Panel pnlResize;
         private System.Windows.Forms.Button btnHelp;
+        private System.Windows.Forms.Button btnFullScreen;
+        private System.Windows.Forms.Panel pnlBG;
     }
 }
 

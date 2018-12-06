@@ -127,10 +127,10 @@ namespace RSWikit
 
         private void frmTools_SizeChanged(object sender, EventArgs e)
         {
-            int top = (int)(Height * 0.02);
-            int left = (int)(Width * 0.1);
-            int height = (int)(Height * 0.025);
-            int width = (int)(Width * 0.8);
+            int top = (int)(ClientSize.Height * 0.02);
+            int left = (int)(ClientSize.Width * 0.1);
+            int height = (int)(ClientSize.Height * 0.025);
+            int width = (int)(ClientSize.Width * 0.8);
 
             //GE time
             lblGE.Top = top;
@@ -146,19 +146,19 @@ namespace RSWikit
             lblGETime.Width = width;
 
             //Horizontal Rule
-            height = (int)(Height * 0.02);
+            height = (int)(ClientSize.Height * 0.02);
             top += height;
 
-            lblHr1.Top = top + (int)(Height * 0.02);
+            lblHr1.Top = top + (int)(ClientSize.Height * 0.02);
             lblHr1.Height = 2;
             lblHr1.Left = 0;
-            lblHr1.Width = Width;
+            lblHr1.Width = ClientSize.Width;
 
             //Size/Pos of Calc text
-            height = (int)(Height * 0.05);
-            width = (int)(Width * 0.60);
+            height = (int)(ClientSize.Height * 0.05);
+            width = (int)(ClientSize.Width * 0.60);
             top += height;
-            left = (int)(Width * 0.2);
+            left = (int)(ClientSize.Width * 0.2);
 
             //Calc Text
             txtCalc.Top = top;
@@ -167,12 +167,12 @@ namespace RSWikit
             txtCalc.Width = width;
 
             //Size of Calc buttons
-            height = (int)(Height * 0.05);
-            width = (int)(Width * 0.12);
+            height = (int)(ClientSize.Height * 0.05);
+            width = (int)(ClientSize.Width * 0.12);
 
             //First row of Calc buttons
             top += height;
-            left = (int)(Width * 0.2);
+            left = (int)(ClientSize.Width * 0.2);
 
             calcMS.Top = top;
             calcMS.Height = height;
@@ -202,7 +202,7 @@ namespace RSWikit
 
             //Second row of Calc buttons
             top += height;
-            left = (int)(Width * 0.2);
+            left = (int)(ClientSize.Width * 0.2);
 
             calc7.Top = top;
             calc7.Height = height;
@@ -239,7 +239,7 @@ namespace RSWikit
 
             //Third row of Calc buttons
             top += height;
-            left = (int)(Width * 0.2);
+            left = (int)(ClientSize.Width * 0.2);
 
             calc4.Top = top;
             calc4.Height = height;
@@ -277,7 +277,7 @@ namespace RSWikit
 
             //Fourth row of Calc buttons
             top += height;
-            left = (int)(Width * 0.2);
+            left = (int)(ClientSize.Width * 0.2);
 
             calc1.Top = top;
             calc1.Height = height;
@@ -314,7 +314,7 @@ namespace RSWikit
 
             //Fifth row of Calc buttons
             top += height;
-            left = (int)(Width * 0.2);
+            left = (int)(ClientSize.Width * 0.2);
 
             calc0.Top = top;
             calc0.Height = height;
@@ -337,19 +337,19 @@ namespace RSWikit
 
 
             //Horizontal Rule
-            height = (int)(Height * 0.04);
+            height = (int)(ClientSize.Height * 0.04);
             top += height;
 
-            lblHr2.Top = top + (int)(Height * 0.02);
+            lblHr2.Top = top + (int)(ClientSize.Height * 0.02);
             lblHr2.Height = 2;
             lblHr2.Left = 0;
-            lblHr2.Width = Width;
+            lblHr2.Width = ClientSize.Width;
 
             //Stopwatch Size
             top += height;
-            left = (int)(Width * 0.1);
-            width = (int)(Width * 0.2);
-            height = (int)(Height * 0.08);
+            left = (int)(ClientSize.Width * 0.1);
+            width = (int)(ClientSize.Width * 0.2);
+            height = (int)(ClientSize.Height * 0.08);
 
             //Stopwatch buttons
             btnStart.Top = top;
@@ -369,8 +369,8 @@ namespace RSWikit
             int oldLeft = left;
 
             //Stopwatch Time size
-            width = (int)(Width * 0.2);
-            height = (int)(Height * 0.04);
+            width = (int)(ClientSize.Width * 0.2);
+            height = (int)(ClientSize.Height * 0.04);
 
             //Stopwatch Time
             txtTime.Top = top;
@@ -381,13 +381,13 @@ namespace RSWikit
             left += width;
 
             //Counter Size
-            width = (int)(Width * 0.05);
-            height = (int)(Height * 0.04);
+            width = (int)(ClientSize.Width * 0.05);
+            height = (int)(ClientSize.Height * 0.04);
 
             //Vertical Rule
             lblVr1.Top = top;
             lblVr1.Height = height;
-            lblVr1.Left = left + (int)(Width * 0.02);
+            lblVr1.Left = left + (int)(ClientSize.Width * 0.02);
             lblVr1.Width = 2;
 
             left += width;
@@ -413,8 +413,8 @@ namespace RSWikit
             btnCountUp.Width = width;
 
             //Lap Size
-            width = (int)(Width * 0.3);
-            height = (int)(Height * 0.04);
+            width = (int)(ClientSize.Width * 0.3);
+            height = (int)(ClientSize.Height * 0.04);
             top += height;
             left = oldLeft;
 
@@ -425,12 +425,12 @@ namespace RSWikit
             txtLap.Width = width;
 
             left += width;
-            width = (int)(Width * 0.05);
+            width = (int)(ClientSize.Width * 0.05);
 
             //Vertical Rule
             lblVr2.Top = top;
             lblVr2.Height = height;
-            lblVr2.Left = left + (int)(Width * 0.02);
+            lblVr2.Left = left + (int)(ClientSize.Width * 0.02);
             lblVr2.Width = 2;
 
             //Counter Buttons
@@ -444,15 +444,15 @@ namespace RSWikit
             top += height;
 
             //Horizontal Rule
-            lblHr3.Top = top + (int)(Height * 0.02);
+            lblHr3.Top = top + (int)(ClientSize.Height * 0.02);
             lblHr3.Height = 2;
             lblHr3.Left = 0;
-            lblHr3.Width = Width;
+            lblHr3.Width = ClientSize.Width;
 
             top += height;
-            left = (int)(Width * 0.1);
-            width = (int)(Width * 0.5);
-            height = (int)(Height * 0.04);
+            left = (int)(ClientSize.Width * 0.1);
+            width = (int)(ClientSize.Width * 0.5);
+            height = (int)(ClientSize.Height * 0.04);
 
             chkCalc.Top = top;
             chkCalc.Height = height;
@@ -460,7 +460,7 @@ namespace RSWikit
             chkCalc.Width = width;
 
             left += width;
-            width = (int)(Width * 0.3);
+            width = (int)(ClientSize.Width * 0.3);
 
             chkLap.Top = top;
             chkLap.Height = height;
@@ -470,9 +470,9 @@ namespace RSWikit
             top += height;
 
             txtNotes.Top = top;
-            txtNotes.Height = Height - top - 32;
-            txtNotes.Left = (int)(Width * 0.1);
-            txtNotes.Width = (int)(Width * 0.8);
+            txtNotes.Height = ClientSize.Height - top;
+            txtNotes.Left = (int)(ClientSize.Width * 0.1);
+            txtNotes.Width = (int)(ClientSize.Width * 0.8);
 
             txtLap.Font = new Font(txtLap.Font.FontFamily, 12f, txtLap.Font.Style);
             while (TextRenderer.MeasureText(txtLap.Text, txtLap.Font).Width > txtLap.Width)

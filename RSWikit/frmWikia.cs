@@ -63,8 +63,8 @@ namespace RSWikit
 
             webWikia.Top = 0;
             webWikia.Left = 0;
-            webWikia.Width = Width;
-            webWikia.Height = Height;
+            webWikia.Width = ClientSize.Width;
+            webWikia.Height = ClientSize.Height;
         }
 
         private class CustomMenuHandler : IContextMenuHandler

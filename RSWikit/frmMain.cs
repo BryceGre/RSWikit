@@ -7,6 +7,7 @@ using System.IO.MemoryMappedFiles;
 using CefSharp;
 using System.IO;
 using System.Threading;
+using System.Drawing.Drawing2D;
 
 namespace RSWikit
 {
@@ -23,9 +24,12 @@ namespace RSWikit
         public static string url = "rs-launch://www.runescape.com/k=5/l=$(Language:0)/jav_config.ws";
         //use old-school runescape wiki
         public static bool osrs = false;
+        //start in fullscreen
+        public static bool full = false;
 
         bool resizing;
         FormWindowState lastWindowState = FormWindowState.Minimized;
+        Rectangle lastBounds = Rectangle.Empty;
 
         //pointer to JagexClient window
         IntPtr clientWin;
@@ -107,6 +111,10 @@ namespace RSWikit
                 //Resize game client
                 UpdateSize();
                 FinishSize();
+
+                //Do fullscreen
+                if (full)
+                    setFullscreen(true);
             }
             else
             {
@@ -216,21 +224,38 @@ namespace RSWikit
 
         private void UpdateSize()
         {
+            int ContentTop = tabSide.TabTop + tabSide.TabHeight;
+            //update the buttons' size
+            Size size = new Size(tabSide.TabHeight, tabSide.TabHeight);
+            btnHelp.Size = size;
+            btnFullScreen.Size = size;
+            btnNewTab.Size = size;
+            //update the buttons' position
+            btnHelp.Top = tabSide.TabTop;
+            btnHelp.Left = ClientSize.Width - btnHelp.Width;
+            btnFullScreen.Top = tabSide.TabTop;
+            btnFullScreen.Left = btnHelp.Left - btnFullScreen.Width;
+            btnNewTab.Top = tabSide.TabTop;
+            btnNewTab.Left = btnFullScreen.Left - btnNewTab.Width;
             //update the sidebar size
             //note that the sidebar fills the page, but the right part is covered by the client
-            //thus any tabs must be aware to use a width of frmMain.sideWidth, rather than this.Width
+            //thus any tabs must be aware to use a width of frmMain.sideWidth
             //when arranging and alligning any components they have
-            tabSide.Height = this.Height - 48;
-            tabSide.Width = this.Width - 48;
-            //update the New Tab button's position
-            btnHelp.Left = this.Width - 48;
-            btnNewTab.Left = this.Width - btnHelp.Width - 48;
+            tabSide.Height = ClientSize.Height;
+            tabSide.Width = btnNewTab.Left;
+            tabSide.Left = 0;
+            tabSide.Top = 0;
+            //update BG panel
+            pnlBG.Width = ClientSize.Width - tabSide.Width;
+            pnlBG.Height = ContentTop;
+            pnlBG.Left = tabSide.Width;
+            pnlBG.Top = 0;
             //update the resize bar
             pnlResize.Left = width - 4;
-            pnlResize.Top = tabSide.TabHeight + 4;
-            pnlResize.MinimumSize = new Size(4, this.Height);
+            pnlResize.Top = ContentTop;
+            pnlResize.MinimumSize = new Size(4, ClientSize.Height);
 
-            Size size = new Size(width, Math.Max(this.Height - 48, 0));
+            size = new Size(width, Math.Max(ClientSize.Height - ContentTop, 0));
             foreach (MdiTabControl.TabPage tab in tabSide.TabPages)
             {
                 Form frm = (Form)tab.Form;
@@ -242,17 +267,18 @@ namespace RSWikit
             if (clientWin != IntPtr.Zero)
             {
                 //update client size and position
-                MoveWindow(clientWin, width, tabSide.TabHeight + 4, this.Width - width - 16, this.Height - tabSide.TabHeight - 44, true);
+                MoveWindow(clientWin, width, ContentTop, ClientSize.Width - width, ClientSize.Height - ContentTop, true);
             }
         }
 
         private void FinishSize()
         {
+            int ContentTop = tabSide.TabTop + tabSide.TabHeight;
             //if JagexClient is docked
             if (clientWin != IntPtr.Zero)
             {
                 //repaint client
-                MoveWindow(clientWin, width, tabSide.TabHeight + 4, this.Width - width - 16, this.Height - tabSide.TabHeight - 44, true);
+                MoveWindow(clientWin, width, ContentTop, ClientSize.Width - width, ClientSize.Height - ContentTop, true);
                 //bring client to front
                 SetForegroundWindow(clientWin);
             }
@@ -302,7 +328,11 @@ namespace RSWikit
         private void frmMain_Resize(object sender, EventArgs e)
         {
             UpdateSize();
-            if (WindowState != lastWindowState)
+            if (FormBorderStyle == FormBorderStyle.None)
+            {
+                FinishSize();
+            }
+            else if (WindowState != lastWindowState)
             {
                 FinishSize();
                 lastWindowState = WindowState;
@@ -426,11 +456,13 @@ namespace RSWikit
                             continue;
                         }
                         //read property
+                        int tempi;
+                        bool tempb;
                         switch (vals[0].ToLower())
                         {
                             case "width":
                                 //width of sidebar
-                                int tempi = 0;
+                                tempi = 0;
                                 if (Int32.TryParse(vals[1], out tempi))
                                     width = tempi;
                                 break;
@@ -442,11 +474,16 @@ namespace RSWikit
                                 break;
                             case "osrs":
                                 //oldschool, true/false
-                                bool tempb = false;
+                                tempb = false;
                                 if (Boolean.TryParse(vals[1], out tempb))
                                     osrs = tempb;
                                 break;
-
+                            case "full":
+                                //start in fullscreen
+                                tempb = false;
+                                if (Boolean.TryParse(vals[1], out tempb))
+                                    full = tempb;
+                                break;
                         }
                     }
                     catch (Exception ex)
@@ -476,6 +513,8 @@ namespace RSWikit
                 file.WriteLine("url=" + url);
                 //write osrs
                 file.WriteLine("osrs=" + osrs);
+                //write full
+                file.WriteLine("full=" + full);
                 //close file
                 file.Close();
             }
@@ -500,6 +539,62 @@ namespace RSWikit
                 // Initialize cef with the provided settings
                 Cef.Initialize(settings, false, null);
             }
+        }
+
+        private bool isFullscreen()
+        {
+            return (FormBorderStyle == FormBorderStyle.None);
+        }
+
+        private void setFullscreen(bool fullscreen)
+        {
+            if (fullscreen)
+            {
+                //Preserve lastWindowState
+                FormWindowState lastState = WindowState;
+
+                //Change state to normal
+                WindowState = FormWindowState.Normal;
+                lastWindowState = lastState;
+
+                //Remove border
+                FormBorderStyle = FormBorderStyle.None;
+
+                //Fill screen
+                lastBounds = Bounds;
+                Bounds = Screen.PrimaryScreen.Bounds;
+            }
+            else
+            {
+                //Preserve lastWindowState
+                FormWindowState lastState = lastWindowState;
+
+                //Restore bounds
+                Bounds = lastBounds;
+                lastBounds = Rectangle.Empty;
+
+                //Restore border
+                FormBorderStyle = FormBorderStyle.Sizable;
+
+                //Restore state
+                lastWindowState = FormWindowState.Minimized;
+                WindowState = lastState;
+            }
+            //set state
+            full = fullscreen;
+        }
+
+        private void btnFullScreen_Click(object sender, EventArgs e)
+        {
+            setFullscreen(!isFullscreen());
+            saveConfig();
+        }
+
+        private void pnlBG_Paint(object sender, PaintEventArgs e)
+        {
+            Rectangle rect = new Rectangle(0, 0, pnlBG.Width, pnlBG.Height);
+            Brush brush = new LinearGradientBrush(rect, Color.DimGray, Color.Black, LinearGradientMode.Vertical);
+            e.Graphics.FillRectangle(brush, rect);
         }
     }
 }
