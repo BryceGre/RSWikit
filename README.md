@@ -25,6 +25,10 @@ I don't really expect anyone to use this (in fact you shouldn't use random clien
 	* Back and Forward.
 	* View source.
 
+## Screenshots
+![Screenshot1](/Screenshot1.png?raw=true "Screenshot1")
+![Screenshot2](/Screenshot2.png?raw=true "Screenshot2")
+
 ## Building
 * I'm not including a built binary, since you really should check the code before using any random client you find on the internet.
 * Download everything and open the solution in VisualStudio. It should build and run fine.
@@ -35,7 +39,7 @@ I don't really expect anyone to use this (in fact you shouldn't use random clien
 * An Official RuneScape client (RS3 or OSRS) installed on your system.
 
 ## Installation
-* Copy the items in the output directory (including the "lib" and "ico" folders, along with the CefSharp and MdiTabControl dlls) to a folder.
+* Copy the items in the output directory (including the "lib" and "ico" folders, along with the MdiTabControl dll and all of the CefSharp dlls) to a folder.
 * Send RSWikit.exe to Desktop as a shortcut.
 
 ## Usage
@@ -54,4 +58,4 @@ I don't really expect anyone to use this (in fact you shouldn't use random clien
   * If the RSWikit client window doesn't show, Drop the shortcut on the window in the upper-left of your screen.
   * If all else fails, there's a config.ini file where you can manually set the launch url.
     * If RSWikit.exe is in a writable directory, config.ini will be in the same directory as RSWikit.exe
-    * IF RSWikit is in a protected directory (like ProgramFiles) then config.ini will be in C:\Users\{Username}\AppData\Local\VirtualStore\{Path to RSWikit.exe}\
+    * IF RSWikit is in a protected directory (like ProgramFiles) then config.ini will be in C:\Users\\{Username}\AppData\Local\VirtualStore\\{Path to RSWikit.exe}\
