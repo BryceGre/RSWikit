@@ -28,6 +28,7 @@ I don't really expect anyone to use this (in fact you shouldn't use random clien
 ## Screenshots
 ![Screenshot1](/Screenshot1.png?raw=true "Screenshot1")
 ![Screenshot2](/Screenshot2.png?raw=true "Screenshot2")
+![Screenshot3](/Screenshot3.png?raw=true "Screenshot3")
 
 ## Building
 * I'm not including a built binary, since you really should check the code before using any random client you find on the internet.
@@ -48,14 +49,20 @@ I don't really expect anyone to use this (in fact you shouldn't use random clien
 3. You can use the toolbox in the sidebar right away.
 4. You can open a new RuneScape Wiki tab in the sidebar by clicking the "+" button in the upper-right.
 5. You can switch between normal and fullscreen using the fullscreen button in the upper-right.
+6. You can switch between RuneScape 3 and OldSchool RuneScape by clicking the swap button in the upper-right.
 6. When you're done, you may either close RSWikit or exit the RuneScape client. Closing one will close the other.
 
 ## Troubleshooting
-* The client comes with the RuneScape 3 NZXT startup command that works as of this time.
-* If you want to use Old-School RuneScape, or the client doesn't launch properly:
-  * Find your RS3 or OSRS client shortcut on your Desktop.
-  * Drag and Drop the shortcut over either the RSWikit client window.
-  * If the RSWikit client window doesn't show, Drop the shortcut on the window in the upper-left of your screen.
-  * If all else fails, there's a config.ini file where you can manually set the launch url.
+* The client starts with the RuneScape 3 NZXT startup command that works as of this time.
+* If you want to use Old-School RuneScape, and don't have RuneScape 3 installed:
+  * Start RSWikit.exe, and wait for the dialog box that says "Unable to find client" pops up.
+  * Click on the icon in the dialog to switch to OSRS (or to RS3 if you're on OSRS)
+  * If all else fails, there's a config.ini file where you can manually set the launch url (see below)
+* If you want to use RuneScape 3, and have accidentally switch to OSRS:
+  * Start RSWikit.exe, and wait for the dialog box that says "Unable to find client" pops up.
+  * Click on the icon in the dialog to switch to RS3 (or to OSRS if you're on RS3)
+  * If all else fails, there's a config.ini file where you can manually set the launch url (see below)
+* If all else fails, find the config.ini file that is created when you first launch the client:
     * If RSWikit.exe is in a writable directory, config.ini will be in the same directory as RSWikit.exe
     * IF RSWikit is in a protected directory (like ProgramFiles) then config.ini will be in C:\Users\\{Username}\AppData\Local\VirtualStore\\{Path to RSWikit.exe}\
+	* Set the field "osrs" to either "True" for OldSchool RuneScape or "False" for RuneScape 3.

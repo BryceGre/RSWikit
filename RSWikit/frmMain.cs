@@ -16,12 +16,12 @@ namespace RSWikit
         /****************/
         /***** Vars *****/
         /****************/
-        static Mutex mutex = new Mutex(true, "{F44E7DB8-2E07-4C53-8261-5965C935AD2E}");
+        public const string rs3_url = "rs-launch://www.runescape.com/jav_config.ws";
+        public const string ors_url = "jagex-jav://oldschool.runescape.com/jav_config.ws";
 
+        static Mutex mutex = new Mutex(true, "{F44E7DB8-2E07-4C53-8261-5965C935AD2E}");
         //width of sidebar
         public static int width = 500;
-        //runescape client launch url
-        public static string url = "rs-launch://www.runescape.com/k=5/l=$(Language:0)/jav_config.ws";
         //use old-school runescape wiki
         public static bool osrs = false;
         //start in fullscreen
@@ -123,12 +123,8 @@ namespace RSWikit
             }
         }
 
-        private void DockApp()
+        private bool DockApp()
         {
-            frmWaiting waiting = new frmWaiting();
-            waiting.setText("Searching for Client...");
-            waiting.Show();
-
             //start client handle at 0
             clientWin = IntPtr.Zero;
 
@@ -137,14 +133,14 @@ namespace RSWikit
             try
             {
                 //stop any existing process that is not docked
-                Process[] pr = Process.GetProcessesByName("rs2client");
+                Process[] pr = Process.GetProcessesByName(osrs ? "JagexLauncher" : "rs2client");
                 for (int i = 0; i < pr.Length; i++)
                 {
                     pr[i].Kill();
                 }
 
                 //start the process
-                Process.Start(url);
+                Process.Start(osrs ? ors_url : rs3_url);
 
                 int timeout = 10000;
 
@@ -155,12 +151,13 @@ namespace RSWikit
                     if (timeout <= 0)
                     {
                         Console.WriteLine("Process not found");
-                        waiting.setText("Could not find client");
-                        waiting.showHelp();
-                        return;
+                        frmWaiting waiting = new frmWaiting();
+                        mutex.Close();
+                        waiting.ShowDialog();
+                        return false;
                     }
 
-                    Process[] ps = Process.GetProcessesByName("rs2client");
+                    Process[] ps = Process.GetProcessesByName(osrs ? "JagexLauncher" : "rs2client");
                     for (int i = 0; i < ps.Length; i++) {
                         if (!ps[i].HasExited) { //&& Array.IndexOf(pids, ps[i].Id) < 0) {
                             p = ps[i];
@@ -203,7 +200,7 @@ namespace RSWikit
             //remove border and maximise
             SetWindowLong(clientWin, GWL_STYLE, WS_VISIBLE);
 
-            waiting.Close();
+            return true;
         }
 
         private void onGameExit(object sender, EventArgs e)
@@ -371,62 +368,13 @@ namespace RSWikit
 
         private void btnHelp_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(this, "Don't see RS? Drag your RuneScape desktop icon (RS3 or OSRS) onto this client to get started.", "Help");
-        }
-
-        private void frmMain_DragDrop(object sender, DragEventArgs e)
-        {
-            dragDrop(e);
-        }
-
-        private void frmMain_DragEnter(object sender, DragEventArgs e)
-        {
-            dragEnter(e);
-        }
-
-        public static void dragDrop(DragEventArgs e)
-        {
-            // Handle FileDrop data.
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            DialogResult dialogResult = MessageBox.Show(osrs ? "Switch or RuneScape 3?" : "Switch to OldSchool RuneScape?", "Switch", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
             {
-                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                foreach (string filename in files)
-                {
-                    if (Path.GetExtension(filename) == ".url")
-                    {
-                        StreamReader file = new StreamReader(filename);
-
-                        //read each line
-                        string line;
-                        while ((line = file.ReadLine()) != null)
-                        {
-                            if (line.StartsWith("URL=", true, null))
-                            {
-                                string temps = line.Substring(4);
-                                if (temps.StartsWith("rs-launch://"))
-                                {
-                                    url = temps;
-                                    osrs = (temps.Contains("oldschool"));
-
-                                    saveConfig();
-                                    Application.Restart();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public static void dragEnter(DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effect = DragDropEffects.Link;
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
+                osrs = !osrs;
+                saveConfig();
+                mutex.Close();
+                Application.Restart();
             }
         }
 
@@ -466,12 +414,6 @@ namespace RSWikit
                                 if (Int32.TryParse(vals[1], out tempi))
                                     width = tempi;
                                 break;
-                            case "url":
-                                //runescape launch url
-                                Console.WriteLine("\"" + vals[1] + "\"");
-                                if (vals[1].StartsWith("rs-launch://"))
-                                    url = vals[1];
-                                break;
                             case "osrs":
                                 //oldschool, true/false
                                 tempb = false;
@@ -496,12 +438,12 @@ namespace RSWikit
             }
             catch (IOException ex)
             {
-            //file does not exist, use defaults
-            saveConfig(); //create file
+                //file does not exist, use defaults
+                saveConfig(); //create file
             }
         }
 
-        private static void saveConfig()
+        public static void saveConfig()
         {
             try
             {
@@ -509,8 +451,6 @@ namespace RSWikit
                 StreamWriter file = new StreamWriter("config.ini");
                 //write sidebar width
                 file.WriteLine("width=" + width);
-                //write runescape url
-                file.WriteLine("url=" + url);
                 //write osrs
                 file.WriteLine("osrs=" + osrs);
                 //write full
@@ -595,6 +535,17 @@ namespace RSWikit
             Rectangle rect = new Rectangle(0, 0, pnlBG.Width, pnlBG.Height);
             Brush brush = new LinearGradientBrush(rect, Color.DimGray, Color.Black, LinearGradientMode.Vertical);
             e.Graphics.FillRectangle(brush, rect);
+        }
+
+        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason != CloseReason.WindowsShutDown &&
+                e.CloseReason != CloseReason.ApplicationExitCall &&
+                e.CloseReason != CloseReason.TaskManagerClosing &&
+                MessageBox.Show("Are you sure you want to quit?", "Quit", MessageBoxButtons.YesNo) == DialogResult.No)
+            {
+                e.Cancel = true;
+            }
         }
     }
 }

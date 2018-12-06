@@ -45,9 +45,9 @@
             this.lblInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(176)))), ((int)(((byte)(224)))), ((int)(((byte)(240)))));
             this.lblInfo.Location = new System.Drawing.Point(0, 0);
             this.lblInfo.Name = "lblInfo";
-            this.lblInfo.Size = new System.Drawing.Size(512, 128);
+            this.lblInfo.Size = new System.Drawing.Size(512, 92);
             this.lblInfo.TabIndex = 0;
-            this.lblInfo.Text = "Searching for Client...";
+            this.lblInfo.Text = "Unable to find client";
             this.lblInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnClose
@@ -68,14 +68,14 @@
             this.btnClose.TabStop = false;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = false;
-            this.btnClose.Visible = false;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // picIcon
             // 
-            this.picIcon.BackColor = System.Drawing.Color.Transparent;
+            this.picIcon.BackColor = System.Drawing.Color.White;
             this.picIcon.BackgroundImage = global::RSWikit.Properties.Resources.RSClientIconLarge;
             this.picIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.picIcon.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.picIcon.ErrorImage = global::RSWikit.Properties.Resources.RSClientIconLarge;
             this.picIcon.InitialImage = global::RSWikit.Properties.Resources.RSClientIconLarge;
             this.picIcon.Location = new System.Drawing.Point(32, 96);
@@ -83,7 +83,7 @@
             this.picIcon.Size = new System.Drawing.Size(128, 128);
             this.picIcon.TabIndex = 16;
             this.picIcon.TabStop = false;
-            this.picIcon.Visible = false;
+            this.picIcon.Click += new System.EventHandler(this.picIcon_Click);
             // 
             // btnHelp
             // 
@@ -103,7 +103,6 @@
             this.btnHelp.TabStop = false;
             this.btnHelp.Text = "Help";
             this.btnHelp.UseVisualStyleBackColor = false;
-            this.btnHelp.Visible = false;
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // frmWaiting
@@ -112,7 +111,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::RSWikit.Properties.Resources.background_content_top;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(512, 128);
+            this.ClientSize = new System.Drawing.Size(512, 256);
             this.ControlBox = false;
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.picIcon);
@@ -124,11 +123,9 @@
             this.Name = "frmWaiting";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frmWaiting";
             this.TopMost = true;
-            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.frmWaiting_DragDrop);
-            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.frmWaiting_DragEnter);
             ((System.ComponentModel.ISupportInitialize)(this.picIcon)).EndInit();
             this.ResumeLayout(false);
 
