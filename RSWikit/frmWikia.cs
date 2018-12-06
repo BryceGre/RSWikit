@@ -95,7 +95,7 @@ namespace RSWikit
                     if (!parameters.LinkUrl.Contains("://"))
                         url = "http://runescape.wikia.com" + url; //full URL link
 
-                    wikiaForm.InvokeOnUiThreadIfRequired(() => wikiaForm.tabPages.Add(new frmWikia(wikiaForm.tabPages, url)).Icon = new Icon("img/icon.ico"));
+                    wikiaForm.InvokeOnUiThreadIfRequired(() => wikiaForm.tabPages.Add(new frmWikia(wikiaForm.tabPages, url)).Icon = new Icon("ico/icon.ico"));
                     return true;
                 }
                 else if (commandId == (CefMenuCommand)26502)
