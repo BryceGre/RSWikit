@@ -33,7 +33,7 @@
             this.tabSide = new MdiTabControl.TabControl();
             this.btnNewTab = new System.Windows.Forms.Button();
             this.pnlResize = new System.Windows.Forms.Panel();
-            this.btnHelp = new System.Windows.Forms.Button();
+            this.btnSwitch = new System.Windows.Forms.Button();
             this.btnFullScreen = new System.Windows.Forms.Button();
             this.pnlBG = new System.Windows.Forms.Panel();
             this.SuspendLayout();
@@ -88,19 +88,19 @@
             this.pnlResize.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlResize_MouseMove);
             this.pnlResize.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlResize_MouseUp);
             // 
-            // btnHelp
+            // btnSwitch
             // 
-            this.btnHelp.BackColor = System.Drawing.Color.DimGray;
-            this.btnHelp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnHelp.Location = new System.Drawing.Point(2788, 0);
-            this.btnHelp.Margin = new System.Windows.Forms.Padding(0);
-            this.btnHelp.Name = "btnHelp";
-            this.btnHelp.Size = new System.Drawing.Size(64, 62);
-            this.btnHelp.TabIndex = 7;
-            this.btnHelp.Text = "⇄";
-            this.btnHelp.UseVisualStyleBackColor = false;
-            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+            this.btnSwitch.BackColor = System.Drawing.Color.DimGray;
+            this.btnSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSwitch.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSwitch.Location = new System.Drawing.Point(2788, 0);
+            this.btnSwitch.Margin = new System.Windows.Forms.Padding(0);
+            this.btnSwitch.Name = "btnSwitch";
+            this.btnSwitch.Size = new System.Drawing.Size(64, 62);
+            this.btnSwitch.TabIndex = 7;
+            this.btnSwitch.Text = "⇄";
+            this.btnSwitch.UseVisualStyleBackColor = false;
+            this.btnSwitch.Click += new System.EventHandler(this.btnSwitch_Click);
             // 
             // btnFullScreen
             // 
@@ -132,7 +132,7 @@
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(2844, 1653);
             this.Controls.Add(this.btnFullScreen);
-            this.Controls.Add(this.btnHelp);
+            this.Controls.Add(this.btnSwitch);
             this.Controls.Add(this.pnlResize);
             this.Controls.Add(this.btnNewTab);
             this.Controls.Add(this.tabSide);
@@ -156,7 +156,7 @@
         private MdiTabControl.TabControl tabSide;
         private System.Windows.Forms.Button btnNewTab;
         private System.Windows.Forms.Panel pnlResize;
-        private System.Windows.Forms.Button btnHelp;
+        private System.Windows.Forms.Button btnSwitch;
         private System.Windows.Forms.Button btnFullScreen;
         private System.Windows.Forms.Panel pnlBG;
     }

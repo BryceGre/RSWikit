@@ -123,7 +123,7 @@ namespace RSWikit
             }
         }
 
-        private bool DockApp()
+        private void DockApp()
         {
             //start client handle at 0
             clientWin = IntPtr.Zero;
@@ -146,20 +146,31 @@ namespace RSWikit
 
                 //now find the process
                 while (p == null) {
+                    //sleep
                     Thread.Sleep(100);
+
+                    //handle timeout
                     timeout -= 100;
                     if (timeout <= 0)
                     {
+                        //search for client process timed out
                         Console.WriteLine("Process not found");
+                        //create the waiting form, which allows the user to switch between RS3 and OSRS
                         frmWaiting waiting = new frmWaiting();
+                        //release "single instance" mutex
                         mutex.Close();
+                        //show the waiting dialog
                         waiting.ShowDialog();
-                        return false;
+                        //stop here
+                        return;
                     }
 
+                    //check for the process
                     Process[] ps = Process.GetProcessesByName(osrs ? "JagexLauncher" : "rs2client");
                     for (int i = 0; i < ps.Length; i++) {
-                        if (!ps[i].HasExited) { //&& Array.IndexOf(pids, ps[i].Id) < 0) {
+                        //if the process hasn't exited
+                        if (!ps[i].HasExited) {
+                            //save the process
                             p = ps[i];
                             break;
                         }
@@ -171,15 +182,18 @@ namespace RSWikit
                 //while the client is starting up
                 while (clientWin == IntPtr.Zero)
                 {
-                    // Wait for client to be created and enter idle condition
+                    //wait for game client to be created and enter idle condition
                     p.WaitForInputIdle(1000);
                     p.Refresh();
+                    //abort if the client finished before we got a handle
                     if (p.HasExited) {
                         Console.WriteLine("Process exited");
-                        Environment.Exit(Environment.ExitCode); //abort if the client finished before we got a handle
+                        Environment.Exit(Environment.ExitCode);
                     }
+                    //save game window and process id
                     clientWin = p.MainWindowHandle;  //store the client window handle
                     clientID = p.Id;
+                    //set a handler to close this client when the game closes.
                     p.EnableRaisingEvents = true;
                     p.Exited += new EventHandler(onGameExit);
                 }
@@ -199,8 +213,6 @@ namespace RSWikit
 
             //remove border and maximise
             SetWindowLong(clientWin, GWL_STYLE, WS_VISIBLE);
-
-            return true;
         }
 
         private void onGameExit(object sender, EventArgs e)
@@ -208,12 +220,14 @@ namespace RSWikit
             //if JagexClient is docked
             if (clientWin != IntPtr.Zero)
             {
+                //clear the ID
                 if (clientID > 0)
                     clientID = 0;
 
                 //clear the handle
                 clientWin = IntPtr.Zero;
 
+                //exit with the game
                 Console.WriteLine("Process exited");
                 Environment.Exit(Environment.ExitCode);
             }
@@ -224,14 +238,14 @@ namespace RSWikit
             int ContentTop = tabSide.TabTop + tabSide.TabHeight;
             //update the buttons' size
             Size size = new Size(tabSide.TabHeight, tabSide.TabHeight);
-            btnHelp.Size = size;
+            btnSwitch.Size = size;
             btnFullScreen.Size = size;
             btnNewTab.Size = size;
             //update the buttons' position
-            btnHelp.Top = tabSide.TabTop;
-            btnHelp.Left = ClientSize.Width - btnHelp.Width;
+            btnSwitch.Top = tabSide.TabTop;
+            btnSwitch.Left = ClientSize.Width - btnSwitch.Width;
             btnFullScreen.Top = tabSide.TabTop;
-            btnFullScreen.Left = btnHelp.Left - btnFullScreen.Width;
+            btnFullScreen.Left = btnSwitch.Left - btnFullScreen.Width;
             btnNewTab.Top = tabSide.TabTop;
             btnNewTab.Left = btnFullScreen.Left - btnNewTab.Width;
             //update the sidebar size
@@ -305,11 +319,6 @@ namespace RSWikit
             base.OnHandleDestroyed(e);
         }
 
-        private void btnNewTab_Click(object sender, EventArgs e)
-        {
-            //add a new wiki tab to the sidebar
-            tabSide.TabPages.Add(new frmWikia(tabSide.TabPages, "http://" + (osrs ? "oldschool" : "www") + ".runescape.wiki/")).Icon = new Icon("ico/icon.ico");
-        }
 
         private void frmMain_Shown(object sender, EventArgs e)
         {
@@ -317,9 +326,9 @@ namespace RSWikit
             this.Width = this.Width + 1;
         }
 
-        private void frmMain_ResizeEnd(object sender, EventArgs e)
+        private void frmMain_Move(object sender, EventArgs e)
         {
-            FinishSize();
+            UpdateSize();
         }
 
         private void frmMain_Resize(object sender, EventArgs e)
@@ -336,13 +345,54 @@ namespace RSWikit
             }
         }
 
-        private void frmMain_Move(object sender, EventArgs e)
+        private void frmMain_ResizeEnd(object sender, EventArgs e)
         {
-            UpdateSize();
+            FinishSize();
+        }
+        
+        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //If the close button is clicked and the game is running
+            if (e.CloseReason != CloseReason.WindowsShutDown &&
+                e.CloseReason != CloseReason.ApplicationExitCall &&
+                e.CloseReason != CloseReason.TaskManagerClosing &&
+                clientWin != IntPtr.Zero)
+            {
+                //Leave it up to the game to decide if it should close.
+                e.Cancel = true;
+                PostMessage(clientWin, WM_CLOSE, 0, 0);
+            }
         }
 
+        private void btnNewTab_Click(object sender, EventArgs e)
+        {
+            //add a new wiki tab to the sidebar
+            tabSide.TabPages.Add(new frmWikia(tabSide.TabPages, "http://" + (osrs ? "oldschool" : "www") + ".runescape.wiki/")).Icon = new Icon("ico/icon.ico");
+        }
+
+        private void btnSwitch_Click(object sender, EventArgs e)
+        {
+            //switch between RS3 and OSRS
+            DialogResult dialogResult = MessageBox.Show(osrs ? "Switch or RuneScape 3?" : "Switch to OldSchool RuneScape?", "Switch", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                osrs = !osrs;
+                saveConfig();
+                mutex.Close();
+                Application.Restart();
+            }
+        }
+
+        private void btnFullScreen_Click(object sender, EventArgs e)
+        {
+            //switch between fullscreen and save
+            setFullscreen(!isFullscreen());
+            saveConfig();
+        }
+        
         private void pnlResize_MouseDown(object sender, MouseEventArgs e)
         {
+            //start resizing sidebar
             resizing = true;
         }
 
@@ -350,6 +400,7 @@ namespace RSWikit
         {
             if (resizing == true)
             {
+                //resize sidebar, snapping to 16px sizes
                 width = Convert.ToInt32((pnlResize.Left + e.X) / 16.0f) * 16;
                 UpdateSize();
             }
@@ -359,23 +410,64 @@ namespace RSWikit
         {
             if (resizing == true)
             {
+                //save the new size of the sidebar
                 saveConfig();
 
+                //stop resizing
                 resizing = false;
                 FinishSize();
             }
         }
 
-        private void btnHelp_Click(object sender, EventArgs e)
+        private void pnlBG_Paint(object sender, PaintEventArgs e)
         {
-            DialogResult dialogResult = MessageBox.Show(osrs ? "Switch or RuneScape 3?" : "Switch to OldSchool RuneScape?", "Switch", MessageBoxButtons.YesNo);
-            if (dialogResult == DialogResult.Yes)
+            //paint a gradient to match the tab bar
+            Rectangle rect = new Rectangle(0, 0, pnlBG.Width, pnlBG.Height);
+            Brush brush = new LinearGradientBrush(rect, Color.DimGray, Color.Black, LinearGradientMode.Vertical);
+            e.Graphics.FillRectangle(brush, rect);
+        }
+
+        private bool isFullscreen()
+        {
+            return (FormBorderStyle == FormBorderStyle.None);
+        }
+
+        private void setFullscreen(bool fullscreen)
+        {
+            if (fullscreen)
             {
-                osrs = !osrs;
-                saveConfig();
-                mutex.Close();
-                Application.Restart();
+                //Preserve lastWindowState
+                FormWindowState lastState = WindowState;
+
+                //Change state to normal
+                WindowState = FormWindowState.Normal;
+                lastWindowState = lastState;
+
+                //Remove border
+                FormBorderStyle = FormBorderStyle.None;
+
+                //Fill screen
+                lastBounds = Bounds;
+                Bounds = Screen.PrimaryScreen.Bounds;
             }
+            else
+            {
+                //Preserve lastWindowState
+                FormWindowState lastState = lastWindowState;
+
+                //Restore bounds
+                Bounds = lastBounds;
+                lastBounds = Rectangle.Empty;
+
+                //Restore border
+                FormBorderStyle = FormBorderStyle.Sizable;
+
+                //Restore state
+                lastWindowState = FormWindowState.Minimized;
+                WindowState = lastState;
+            }
+            //set state
+            full = fullscreen;
         }
 
         private static void loadConfig()
@@ -478,73 +570,6 @@ namespace RSWikit
                 settings.BrowserSubprocessPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"lib\CefSharp.BrowserSubprocess.exe");
                 // Initialize cef with the provided settings
                 Cef.Initialize(settings, false, null);
-            }
-        }
-
-        private bool isFullscreen()
-        {
-            return (FormBorderStyle == FormBorderStyle.None);
-        }
-
-        private void setFullscreen(bool fullscreen)
-        {
-            if (fullscreen)
-            {
-                //Preserve lastWindowState
-                FormWindowState lastState = WindowState;
-
-                //Change state to normal
-                WindowState = FormWindowState.Normal;
-                lastWindowState = lastState;
-
-                //Remove border
-                FormBorderStyle = FormBorderStyle.None;
-
-                //Fill screen
-                lastBounds = Bounds;
-                Bounds = Screen.PrimaryScreen.Bounds;
-            }
-            else
-            {
-                //Preserve lastWindowState
-                FormWindowState lastState = lastWindowState;
-
-                //Restore bounds
-                Bounds = lastBounds;
-                lastBounds = Rectangle.Empty;
-
-                //Restore border
-                FormBorderStyle = FormBorderStyle.Sizable;
-
-                //Restore state
-                lastWindowState = FormWindowState.Minimized;
-                WindowState = lastState;
-            }
-            //set state
-            full = fullscreen;
-        }
-
-        private void btnFullScreen_Click(object sender, EventArgs e)
-        {
-            setFullscreen(!isFullscreen());
-            saveConfig();
-        }
-
-        private void pnlBG_Paint(object sender, PaintEventArgs e)
-        {
-            Rectangle rect = new Rectangle(0, 0, pnlBG.Width, pnlBG.Height);
-            Brush brush = new LinearGradientBrush(rect, Color.DimGray, Color.Black, LinearGradientMode.Vertical);
-            e.Graphics.FillRectangle(brush, rect);
-        }
-
-        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason != CloseReason.WindowsShutDown &&
-                e.CloseReason != CloseReason.ApplicationExitCall &&
-                e.CloseReason != CloseReason.TaskManagerClosing &&
-                MessageBox.Show("Are you sure you want to quit?", "Quit", MessageBoxButtons.YesNo) == DialogResult.No)
-            {
-                e.Cancel = true;
             }
         }
     }
