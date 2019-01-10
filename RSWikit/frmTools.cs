@@ -86,15 +86,25 @@ namespace RSWikit
             //if script still exists
             if (time != "")
             {
-                //get a substring containing seconds since last update
-                int start = time.IndexOf("UPDATEAGO:") + 11;
-                int length = time.IndexOf("\n", start) - start;
-                time = time.Substring(start, length);
+                try
+                {
+                    //get a substring containing seconds since last update
+                    int start = time.IndexOf("UPDATEAGO:") + 11;
+                    int length = time.IndexOf("\n", start) - start;
+                    time = time.Substring(start, length);
 
-                //parse substring into int
-                GESeconds = int.Parse(time);
-                //update time display
-                updateTime();
+                    //parse substring into int
+                    GESeconds = int.Parse(time);
+                    //update time display
+                    updateTime();
+                }
+                catch (Exception e)
+                {
+                    //problem with server, do nothing
+                    //either the data format's changed
+                    //or the server has an error
+                    lblGETime.Text = "Error pulling time from server";
+                }
             }
         }
 

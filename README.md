@@ -38,6 +38,8 @@ I don't really expect anyone to use this (in fact you shouldn't use random clien
 ## Requirements
 * VisualStudio 2017 or newer.
 * An Official RuneScape client (RS3 or OSRS) installed on your system.
+* [Microsoft .NET Framework 4.5.2](https://dotnet.microsoft.com/download/dotnet-framework-runtime/net452)
+* [Microsoft Visual C++ Redistributable Package 2013](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads)
 
 ## Installation
 * Copy the items in the output directory (including the "lib" and "ico" folders, along with the MdiTabControl dll and all of the CefSharp dlls) to a folder.

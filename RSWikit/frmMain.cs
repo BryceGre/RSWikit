@@ -8,6 +8,9 @@ using CefSharp;
 using System.IO;
 using System.Threading;
 using System.Drawing.Drawing2D;
+using System.Collections.Generic;
+using CefSharp.WinForms.Internals;
+using System.Text;
 
 namespace RSWikit
 {
@@ -26,6 +29,8 @@ namespace RSWikit
         public static bool osrs = false;
         //start in fullscreen
         public static bool full = false;
+        //list of open tabs
+        public static List<string> tabs = new List<string>();
 
         bool resizing;
         FormWindowState lastWindowState = FormWindowState.Minimized;
@@ -215,6 +220,22 @@ namespace RSWikit
             SetWindowLong(clientWin, GWL_STYLE, WS_VISIBLE);
         }
 
+        private void RestoreTabs()
+        {
+            Console.WriteLine("tabs.Count = " + tabs.Count);
+            if (tabs.Count > 0 && MessageBox.Show("Restore your previous tabs?", "RSWikit", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                foreach (string tab in tabs)
+                {
+                    this.InvokeOnUiThreadIfRequired(() => tabSide.TabPages.Add(new frmWikia(tabSide.TabPages, tab)).Icon = new Icon("ico/icon.ico"));
+                }
+            }
+            else
+            {
+                tabs.Clear();
+            }
+        }
+
         private void onGameExit(object sender, EventArgs e)
         {
             //if JagexClient is docked
@@ -319,11 +340,12 @@ namespace RSWikit
             base.OnHandleDestroyed(e);
         }
 
-
         private void frmMain_Shown(object sender, EventArgs e)
         {
             //change the size so that the client window is correctly arranged and displayed
             this.Width = this.Width + 1;
+            //restore tabs if neccessary
+            RestoreTabs();
         }
 
         private void frmMain_Move(object sender, EventArgs e)
@@ -373,7 +395,7 @@ namespace RSWikit
         private void btnSwitch_Click(object sender, EventArgs e)
         {
             //switch between RS3 and OSRS
-            DialogResult dialogResult = MessageBox.Show(osrs ? "Switch or RuneScape 3?" : "Switch to OldSchool RuneScape?", "Switch", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show(osrs ? "Switch or RuneScape 3?" : "Switch to OldSchool RuneScape?", "RSWikit", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
                 osrs = !osrs;
@@ -518,6 +540,12 @@ namespace RSWikit
                                 if (Boolean.TryParse(vals[1], out tempb))
                                     full = tempb;
                                 break;
+                            case "tabs":
+                                //restore tabs
+                                string[] list = vals[1].Split(' ');
+                                tabs.AddRange(list);
+                                tabs.Reverse();
+                                break;
                         }
                     }
                     catch (Exception ex)
@@ -547,6 +575,8 @@ namespace RSWikit
                 file.WriteLine("osrs=" + osrs);
                 //write full
                 file.WriteLine("full=" + full);
+                //write tabs
+                file.WriteLine("tabs=" + makeTabs());
                 //close file
                 file.Close();
             }
@@ -554,6 +584,35 @@ namespace RSWikit
             {
                 MessageBox.Show(ex.Message, "Error");
             }
+        }
+
+        public static void saveTabs(MdiTabControl.TabControl.TabPageCollection tabPages)
+        {
+
+            tabs.Clear();
+            foreach (MdiTabControl.TabPage tab in tabPages)
+            {
+                frmWikia form = tab.Form as frmWikia;
+                if (form != null)
+                {
+                    tabs.Add(form.getUrl());
+                }
+            }
+            saveConfig();
+        }
+
+        private static string makeTabs()
+        {
+
+            StringBuilder str = new StringBuilder();
+
+            foreach (string tab in tabs)
+                str.Append(tab + " ");
+
+            if (tabs.Count > 0)
+                str.Length--;
+
+            return str.ToString();
         }
 
         private static void InitializeChromium()
@@ -565,6 +624,7 @@ namespace RSWikit
                 settings.UserAgent = "Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19";
                 settings.CachePath = "cache";
                 settings.ResourcesDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"lib\");
+                Console.WriteLine(settings.ResourcesDirPath);
                 settings.LocalesDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"lib\locales\");
                 settings.DisableGpuAcceleration();
                 settings.BrowserSubprocessPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"lib\CefSharp.BrowserSubprocess.exe");

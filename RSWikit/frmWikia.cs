@@ -11,6 +11,7 @@ namespace RSWikit
     {
         private MdiTabControl.TabControl.TabPageCollection tabPages;
         private string initUrl;
+        private string currUrl;
 
         public frmWikia() : this(null, "http://" + (frmMain.osrs ? "oldschool" : "www") + ".runescape.wiki/") {}
         public frmWikia(MdiTabControl.TabControl.TabPageCollection tabs, String url)
@@ -25,6 +26,7 @@ namespace RSWikit
             webWikia.Size = new Size(400, 768);
             webWikia.MenuHandler = new CustomMenuHandler(this);
             webWikia.TitleChanged += webWikia_TitleChanged;
+            webWikia.AddressChanged += WebWikia_AddressChanged;
             Controls.Add(webWikia);
             this.ResumeLayout(false);
 
@@ -33,8 +35,21 @@ namespace RSWikit
 
             tabPages = tabs;
             initUrl = url;
+            currUrl = initUrl;
 
             resize();
+        }
+
+        public string getUrl()
+        {
+            return currUrl;
+        }
+
+        private void WebWikia_AddressChanged(object sender, AddressChangedEventArgs e)
+        {
+            currUrl = e.Address;
+            Console.WriteLine("AddressChanged");
+            frmMain.saveTabs(tabPages);
         }
 
         private void frmWikia_SizeChanged(object sender, EventArgs e)
